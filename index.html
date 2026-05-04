@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth" style="scroll-padding-top: 5rem;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conducción Transitoria Multidimensional</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        multi: {
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        },
+                        accent: {
+                            100: '#fef3c7',
+                            500: '#f59e0b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- MathJax -->
+    <script>
+      MathJax = {
+        tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] },
+        svg: { fontCache: 'global' }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 5px; }
+        .math-container { overflow-x: auto; padding: 1rem 0; }
+        .geometry-card:hover .geometry-icon { transform: rotate(10deg) scale(1.1); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md shadow-md" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="bg-multi-500 p-2 rounded-lg mr-3">
+                        <i class="fa-solid fa-cubes text-white text-xl"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Transferencia <span class="text-multi-500">2D/3D</span></span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
+                    <a href="#introduccion" class="hover:text-multi-500 transition">Concepto</a>
+                    <a href="#teorema-producto" class="hover:text-multi-500 transition">Teorema</a>
+                    <a href="#geometrias" class="hover:text-multi-500 transition">Geometrías</a>
+                    <a href="#simulador" class="hover:text-multi-500 transition">Simulador</a>
+                    <a href="#ejemplos" class="hover:text-multi-500 transition">Ejemplos</a>
+                </div>
+
+                <div class="flex md:hidden items-center">
+                    <button id="mobile-menu-btn" class="text-slate-600">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t p-4 space-y-2 shadow-lg">
+            <a href="#introduccion" class="block py-2 text-slate-700">Concepto</a>
+            <a href="#teorema-producto" class="block py-2 text-slate-700">Teorema del Producto</a>
+            <a href="#geometrias" class="block py-2 text-slate-700">Geometrías Comunes</a>
+            <a href="#simulador" class="block py-2 text-slate-700">Simulador</a>
+            <a href="#ejemplos" class="block py-2 text-slate-700">Ejemplos</a>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="relative pt-32 pb-20 bg-multi-900 text-white overflow-hidden shadow-2xl">
+        <div class="absolute inset-0 opacity-20">
+            <div class="absolute -top-24 -left-24 w-96 h-96 bg-indigo-500 rounded-full blur-3xl animate-pulse"></div>
+            <div class="absolute top-1/2 -right-24 w-80 h-80 bg-purple-500 rounded-full blur-3xl animate-pulse"></div>
+        </div>
+
+        <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
+            <span class="inline-block bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-6">Sistemas Multidimensionales</span>
+            <h1 class="text-4xl md:text-6xl font-black mb-6 leading-tight">
+                Conducción Transitoria en <br> <span class="text-indigo-300">Múltiples Dimensiones</span>
+            </h1>
+            <p class="text-lg text-indigo-100/80 max-w-2xl mx-auto font-light leading-relaxed">
+                Resolución de problemas complejos de transferencia de calor mediante la superposición de soluciones unidimensionales.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-16 space-y-20">
+
+        <!-- 1. Introducción -->
+        <section id="introduccion" class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <h2 class="text-3xl font-bold text-slate-900 flex items-center gap-3">
+                    <span class="w-10 h-10 bg-multi-100 text-multi-500 rounded-full flex items-center justify-center text-lg">1</span>
+                    El Salto a las 3 Dimensiones
+                </h2>
+                <p class="text-slate-600 leading-relaxed">
+                    En la práctica, muchos cuerpos como bloques rectangulares o cilindros cortos presentan gradientes de temperatura en más de una dirección. Para estos casos, la temperatura es una función de varias coordenadas espaciales y del tiempo: $T(x, y, z, t)$.
+                </p>
+                <div class="bg-indigo-50 border-l-4 border-indigo-500 p-6 rounded-r-xl">
+                    <p class="text-sm text-indigo-900 font-medium italic">
+                        "La solución para una geometría multidimensional puede expresarse como el producto de las soluciones de geometrías unidimensionales componentes." [Cengel, p. 11]
+                    </p>
+                </div>
+            </div>
+            <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 relative group overflow-hidden">
+                <i class="fa-solid fa-draw-polygon absolute -right-4 -bottom-4 text-8xl text-slate-50 group-hover:text-indigo-50 transition-colors"></i>
+                <h3 class="text-xl font-bold text-slate-900 mb-4">¿Por qué usar este método?</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start gap-3 text-slate-600">
+                        <i class="fa-solid fa-check-circle text-emerald-500 mt-1"></i>
+                        <span>Evita resolver ecuaciones diferenciales parciales complejas.</span>
+                    </li>
+                    <li class="flex items-start gap-3 text-slate-600">
+                        <i class="fa-solid fa-check-circle text-emerald-500 mt-1"></i>
+                        <span>Permite usar las gráficas de Heisler o soluciones de un término.</span>
+                    </li>
+                    <li class="flex items-start gap-3 text-slate-600">
+                        <i class="fa-solid fa-check-circle text-emerald-500 mt-1"></i>
+                        <span>Es exacto para cuerpos con temperatura inicial uniforme y condiciones de frontera constantes.</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 2. Teorema del Producto -->
+        <section id="teorema-producto" class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 md:p-12">
+            <h2 class="text-3xl font-bold text-slate-900 mb-8 border-b-2 border-multi-500 inline-block pb-2">2. Teorema del Producto</h2>
+            
+            <p class="text-slate-600 mb-8">Definimos la temperatura adimensional $\theta(x, t)$ para el caso general como:</p>
+            
+            <div class="bg-slate-900 text-white rounded-2xl p-8 mb-10 text-center shadow-inner">
+                <div class="math-container text-xl md:text-2xl">
+                    $$\theta(x, y, z, t) = \frac{T(x, y, z, t) - T_\infty}{T_i - T_\infty}$$
+                </div>
+                <div class="mt-4 text-indigo-300 font-mono text-sm uppercase tracking-widest">Fórmula Maestra de Superposición</div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200">
+                    <h3 class="font-bold text-multi-700 mb-3 uppercase text-sm tracking-wider">Bloque Rectangular (3D)</h3>
+                    <p class="text-slate-600 mb-4 text-sm">Es la intersección de 3 paredes planas infinitas de espesores $2L_1, 2L_2, 2L_3$:</p>
+                    <div class="math-container text-lg">
+                        $$\theta_{rect}(x,y,z,t) = \theta_{pared}(x,t) \cdot \theta_{pared}(y,t) \cdot \theta_{pared}(z,t)$$
+                    </div>
+                </div>
+                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200">
+                    <h3 class="font-bold text-multi-700 mb-3 uppercase text-sm tracking-wider">Cilindro Corto (2D)</h3>
+                    <p class="text-slate-600 mb-4 text-sm">Es la intersección de un cilindro infinito de radio $r_o$ y una pared plana de espesor $2L$:</p>
+                    <div class="math-container text-lg">
+                        $$\theta_{cil\_corto}(r,z,t) = \theta_{inf\_cil}(r,t) \cdot \theta_{pared}(z,t)$$
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Geometrías -->
+        <section id="geometrias">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">3. Visualización de Intersecciones</h2>
+                <p class="text-slate-500">Cómo se construyen los objetos multidimensionales a partir de soluciones básicas.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Barra rectangular -->
+                <div class="geometry-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-xl">
+                    <div class="geometry-icon w-14 h-14 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl mb-6 transition-transform">
+                        <i class="fa-solid fa-maximize"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">Barra Rectangular</h4>
+                    <p class="text-slate-500 text-sm mb-4">Intersección de dos paredes planas infinitas.</p>
+                    <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">2 Dimensiones</span>
+                </div>
+                <!-- Semicilindro -->
+                <div class="geometry-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-xl">
+                    <div class="geometry-icon w-14 h-14 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center text-2xl mb-6 transition-transform">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">Cilindro Corto</h4>
+                    <p class="text-slate-500 text-sm mb-4">Intersección de un cilindro infinito y una pared plana.</p>
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">2 Dimensiones</span>
+                </div>
+                <!-- Paralelepipedo -->
+                <div class="geometry-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-xl">
+                    <div class="geometry-icon w-14 h-14 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center text-2xl mb-6 transition-transform">
+                        <i class="fa-solid fa-cube"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">Bloque Sólido</h4>
+                    <p class="text-slate-500 text-sm mb-4">Intersección de tres paredes planas perpendiculares.</p>
+                    <span class="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded">3 Dimensiones</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Simulador -->
+        <section id="simulador" class="bg-slate-900 rounded-[3rem] p-8 md:p-12 text-white shadow-2xl">
+            <div class="flex flex-col lg:flex-row gap-12">
+                <div class="lg:w-1/3 space-y-6">
+                    <h2 class="text-3xl font-black">Comparativa de Enfriamiento</h2>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Observe cómo la dimensión del objeto afecta la velocidad de enfriamiento en el centro. A igualdad de condiciones, un objeto con más dimensiones expuestas al fluido se enfría más rápido.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-4 h-4 rounded-full bg-blue-400"></div>
+                            <span class="text-xs uppercase font-bold tracking-widest text-slate-300">1D: Pared Infinita</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-4 h-4 rounded-full bg-indigo-400"></div>
+                            <span class="text-xs uppercase font-bold tracking-widest text-slate-300">2D: Cilindro Corto</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-4 h-4 rounded-full bg-purple-400"></div>
+                            <span class="text-xs uppercase font-bold tracking-widest text-slate-300">3D: Bloque / Cubo</span>
+                        </div>
+                    </div>
+                    <button onclick="updateChart()" class="w-full py-4 bg-multi-500 hover:bg-multi-600 rounded-2xl font-bold transition-all shadow-lg shadow-multi-500/20">Reiniciar Simulación</button>
+                </div>
+                <div class="lg:w-2/3 bg-white/5 backdrop-blur-md rounded-3xl p-6 border border-white/10 h-[400px]">
+                    <canvas id="multiChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Ejemplo -->
+        <section id="ejemplos" class="space-y-12">
+            <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-multi-500 inline-block pb-2">4. Ejemplo de Aplicación</h2>
+            
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200">
+                <div class="bg-multi-700 p-8 text-white">
+                    <h3 class="text-xl font-bold mb-2">Enfriamiento de un Cilindro Corto de Aluminio</h3>
+                    <p class="text-indigo-100 text-sm">Problema típico de examen - Uso del Teorema del Producto</p>
+                </div>
+                <div class="p-8 lg:p-12 grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div class="space-y-6">
+                        <div class="bg-slate-50 p-6 rounded-2xl border-l-4 border-multi-500">
+                            <p class="text-slate-700 text-sm leading-relaxed">
+                                <strong>Enunciado:</strong> Un cilindro de aluminio ($k=237 W/m\cdot K, \alpha=9.71\times 10^{-5} m^2/s$) de $10 \text{ cm}$ de altura y $15 \text{ cm}$ de diámetro se extrae de un horno a $400^\circ C$ y se sumerge en agua a $20^\circ C$ ($h=120 W/m^2\cdot K$). Calcule la temperatura en el centro tras $15$ minutos.
+                            </p>
+                        </div>
+                        <div class="space-y-2">
+                            <h4 class="font-bold text-slate-900">Datos:</h4>
+                            <ul class="text-sm text-slate-500 grid grid-cols-2 gap-2">
+                                <li>$T_i = 400^\circ C$</li>
+                                <li>$T_\infty = 20^\circ C$</li>
+                                <li>$t = 900 \text{ s}$</li>
+                                <li>$L = 0.05 \text{ m}$ (mitad altura)</li>
+                                <li>$r_o = 0.075 \text{ m}$ (radio)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900 text-slate-300 p-8 rounded-3xl font-mono text-xs leading-relaxed space-y-4">
+                        <p class="text-emerald-400">// PASO 1: Calcular Bi y Fo para pared y cilindro</p>
+                        <p>Pared: $Bi = 0.025, Fo = 35 \implies \theta_{pared} \approx 0.42$</p>
+                        <p>Cilindro Inf: $Bi = 0.038, Fo = 15.5 \implies \theta_{inf\_cil} \approx 0.31$</p>
+                        <p class="text-emerald-400">// PASO 2: Aplicar Teorema del Producto</p>
+                        <p>$\theta_{total} = \theta_{pared} \cdot \theta_{inf\_cil}$</p>
+                        <p>$\theta_{total} = 0.42 \times 0.31 = 0.1302$</p>
+                        <p class="text-emerald-400">// PASO 3: Convertir a Temperatura</p>
+                        <p>$T = T_\infty + \theta_{total}(T_i - T_\infty)$</p>
+                        <p>$T = 20 + 0.1302(380) = 69.4^\circ C$</p>
+                        <div class="mt-4 bg-emerald-500/20 text-emerald-400 p-2 rounded border border-emerald-500/50 text-center font-bold">
+                            Resultado: 69.4 °C
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-white py-16 text-center text-sm border-t border-white/10">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="flex justify-center gap-6 mb-8">
+                <i class="fa-solid fa-cube text-2xl text-multi-500"></i>
+                <i class="fa-solid fa-layer-group text-2xl text-indigo-400"></i>
+                <i class="fa-solid fa-temperature-half text-2xl text-purple-400"></i>
+            </div>
+            <p class="text-slate-400 mb-4">Basado en Transferencia de Calor y Masa - Cengel (Cap. 4, Secc. 4.4)</p>
+            <p class="text-slate-600 italic">© 2026 Universidad de América - Ingeniería Térmica Interactiva</p>
+        </div>
+    </footer>
+
+    <script>
+        // Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        btn.addEventListener('click', () => menu.classList.toggle('hidden'));
+
+        // Simulador Chart
+        const ctxMulti = document.getElementById('multiChart').getContext('2d');
+        let multiChart;
+
+        function updateChart() {
+            const time = Array.from({length: 20}, (_, i) => i * 5); // 0 a 100 min
+            
+            // Modelado simplificado de decaimiento exponencial por dimensiones
+            const wall1D = time.map(t => Math.exp(-0.02 * t));
+            const cyl2D = time.map(t => Math.exp(-0.04 * t));
+            const cube3D = time.map(t => Math.exp(-0.06 * t));
+
+            const data = {
+                labels: time,
+                datasets: [
+                    {
+                        label: 'Pared Plana (1D)',
+                        data: wall1D,
+                        borderColor: '#60a5fa',
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Cilindro Corto (2D)',
+                        data: cyl2D,
+                        borderColor: '#818cf8',
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Bloque Sólido (3D)',
+                        data: cube3D,
+                        borderColor: '#a855f7',
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        tension: 0.4
+                    }
+                ]
+            };
+
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#94a3b8', font: { size: 10 } } }
+                    },
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'Tiempo (min)', color: '#64748b' },
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#64748b' }
+                        },
+                        y: { 
+                            title: { display: true, text: 'Temp Adimensional (θ)', color: '#64748b' },
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#64748b' },
+                            min: 0, max: 1
+                        }
+                    }
+                }
+            };
+
+            if (multiChart) multiChart.destroy();
+            multiChart = new Chart(ctxMulti, config);
+        }
+
+        window.onload = updateChart;
+    </script>
+</body>
+</html>
